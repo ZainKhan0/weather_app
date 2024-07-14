@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form action="/" method="post">
+            <label for="city">City Name:</label>
+            <input type="text" id="city" name="city" required>
+            <button type="submit">Get Weather</button>
+        </form>
+        <ul>
+            {% if data and data|length > 0 %}
+                {% for row in data %}
+                    <li>
+                        <div>{{ row[1] }}: Temp: {{ row[2] }}°C, Pressure: {{ row[3] }} hPa, Humidity: {{ row[4] }}%, Description: {{ row[5] }}</div>
+                        <div class="actions">
+                            <form action="/weather/{{ row[1] }}" method="post">
+                                <input type="hidden" name="_method" value="put">
+                                <button type="submit">Update</button>
+                            </form>
+                            <form action="/weather/{{ row[1] }}" method="post">
+                                <input type="hidden" name="_method" value="delete">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No weather data available.</li>
+            {% endif %}
+        </ul>
+        {% if detailed_data %}
+            <h2>Detailed Weather Data for {{ city }}</h2>
+            <ul>
+                {% for row in detailed_data %}
+                    <li>
+                        {{ row[1] }}: Temp: {{ row[2] }}°C, Pressure: {{ row[3] }} hPa, Humidity: {{ row[4] }}%, Description: {{ row[5] }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
